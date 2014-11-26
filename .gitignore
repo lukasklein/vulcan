@@ -5,3 +5,4 @@ production/
 .sass-cache
 chrome-extension/panes/*
 !/chrome-extension/panes/index.html
+.DS_Store

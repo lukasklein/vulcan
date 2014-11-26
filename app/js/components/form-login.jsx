@@ -21,9 +21,31 @@ module.exports = React.createClass({
   */
 
   getInitialState: function() {
+    this.getFirebases();
     return {
       url: this.getFirebaseURL()
     };
+  },
+
+
+  /*
+  * getFirebases
+  *
+  * Get the current user's Firebases from https://admin.firebase.com/account with the user's auth token (see background.js)
+  */
+
+  getFirebases: function() {
+    // Create a connection to the background script
+    var backgroundPageConnection = chrome.runtime.connect({
+        name: "vulcan"
+    });
+
+    var that = this;
+
+    backgroundPageConnection.onMessage.addListener(function(message) {
+        that.firebases = message;
+        that.forceUpdate();
+    });
   },
 
 
@@ -150,6 +172,22 @@ module.exports = React.createClass({
       'form-fields-large': !this.props.isDevTools
     });
 
+    
+    var ExistingFirebase = React.createClass({
+      render: function() {
+        return (
+          <li>
+            https://<strong>{this.props.fb}</strong>.firebaseio.com
+          </li>
+        )
+      }
+    });
+
+    var firebasesLis = [];
+    for(fb in this.firebases) {
+      firebasesLis.push(<ExistingFirebase fb={fb} />);
+    }
+
 
     return  (
       <form onSubmit={this.handleSubmit} className={pclass(classes)}>
@@ -161,6 +199,12 @@ module.exports = React.createClass({
           <li>
             <label for="urlField" ref="urlLabel">Firebase URL</label>
             <input id="urlField" ref="url" placeholder="https://yourapp.firebaseio.com" type="text" name="url" defaultValue={this.state.url}/>
+          </li>
+          <li>
+            <label for="choices">Or choose one of your existing Firebases:</label>
+            <ul>
+              {firebasesLis}
+            </ul>
           </li>
           <li>
             {this.renderAuthLabel()}
