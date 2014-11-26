@@ -177,7 +177,7 @@ module.exports = React.createClass({
       render: function() {
         return (
           <li>
-            https://<strong>{this.props.fb}</strong>.firebaseio.com
+            https://<strong>{this.props.fb.firebaseName}</strong>.firebaseio.com <small>({this.props.fb.secret})</small>
           </li>
         )
       }
@@ -185,7 +185,7 @@ module.exports = React.createClass({
 
     var firebasesLis = [];
     for(fb in this.firebases) {
-      firebasesLis.push(<ExistingFirebase fb={fb} />);
+      firebasesLis.push(<ExistingFirebase fb={this.firebases[fb]} />);
     }
 
 
@@ -201,7 +201,7 @@ module.exports = React.createClass({
             <input id="urlField" ref="url" placeholder="https://yourapp.firebaseio.com" type="text" name="url" defaultValue={this.state.url}/>
           </li>
           <li>
-            <label for="choices">Or choose one of your existing Firebases:</label>
+            <label for="choices">Or choose one of your existing Firebases <small>(Authentication Token)</small>:</label>
             <ul>
               {firebasesLis}
             </ul>
